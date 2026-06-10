@@ -1,8 +1,6 @@
 package br.com.chronosgeo.service;
 
 import br.com.chronosgeo.entity.Ocorrencia;
-import br.com.chronosgeo.entity.Regiao;
-import br.com.chronosgeo.entity.TipoEvento;
 import br.com.chronosgeo.exception.ChronosGeoException;
 import br.com.chronosgeo.repository.OcorrenciaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
