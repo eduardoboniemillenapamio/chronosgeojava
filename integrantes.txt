@@ -1,0 +1,115 @@
+================================================================
+GLOBAL SOLUTION 2026/1 - FIAP
+Disciplina: Domain Driven Design Using Java
+Tema: ChronosGeo - Sistema de Monitoramento Ambiental
+      via Dados de Satelite para Prevencao de Desastres
+================================================================
+
+INTEGRANTE DO GRUPO:
+
+Nome:  Millena dos Santos Pamio
+RM:    566664
+Turma: 1TDSPS
+
+================================================================
+SOBRE O PROJETO:
+
+Framework : Quarkus 3.8.4
+Linguagem  : Java 17
+Banco      : Oracle Database (tabelas GS_* do projeto ChronosGeo)
+Padrao     : REST API (JAX-RS), DAO com Panache, MVC
+
+================================================================
+ESTRUTURA DO PROJETO:
+
+chronosgeo-api/
+  pom.xml
+  src/main/
+    resources/
+      application.properties   <- datasource Oracle, CORS, JPA
+    java/br/com/chronosgeo/
+      entity/
+        Satelite.java           <- GS_SATELITE
+        Regiao.java             <- GS_REGIAO
+        TipoEvento.java         <- GS_TIPO_EVENTO
+        Ocorrencia.java         <- GS_OCORRENCIA (FK: regiao, tipoEvento)
+        Alerta.java             <- GS_ALERTA     (FK: ocorrencia)
+        Usuario.java            <- GS_USUARIO
+      repository/
+        OcorrenciaRepository.java  <- DAO (PanacheRepository)
+        AlertaRepository.java      <- DAO (PanacheRepository)
+        UsuarioRepository.java     <- DAO (PanacheRepository)
+      service/
+        OcorrenciaService.java     <- Regras de negocio
+        AlertaService.java         <- Regras de negocio
+        UsuarioService.java        <- Regras de negocio
+      resource/
+        OcorrenciaResource.java    <- Endpoints REST (CRUD completo)
+        AlertaResource.java        <- Endpoints REST (CRUD completo)
+        UsuarioResource.java       <- Endpoints REST (CRUD + desativar)
+      exception/
+        ChronosGeoException.java   <- Excecao customizada
+        GlobalExceptionMapper.java <- Mapper global de erros -> JSON
+
+================================================================
+ENDPOINTS DISPONIVEIS:
+
+/api/ocorrencias        GET POST
+/api/ocorrencias/{id}   GET PUT DELETE
+/api/ocorrencias?status=ATIVA       GET (filtro)
+/api/ocorrencias?severidade=ALTO    GET (filtro)
+
+/api/alertas            GET POST
+/api/alertas/{id}       GET PUT DELETE
+/api/alertas?nivel=EMERGENCIA       GET (filtro)
+/api/alertas?idOcorrencia=1         GET (filtro)
+
+/api/usuarios           GET POST
+/api/usuarios/ativos    GET
+/api/usuarios/{id}      GET PUT DELETE
+/api/usuarios/{id}/desativar        PATCH (soft delete)
+/api/usuarios?perfil=ANALISTA       GET (filtro)
+
+================================================================
+COMO EXECUTAR:
+
+Pre-requisitos:
+  - Java JDK 17 ou superior
+  - Maven 3.9+
+  - Acesso ao Oracle Database da FIAP
+
+1. Configurar credenciais em:
+   src/main/resources/application.properties
+   (usuario, password e jdbc-url fornecidos pelo professor)
+
+2. Executar em modo de desenvolvimento:
+   mvn quarkus:dev
+
+3. A API estara disponivel em:
+   http://localhost:8080/api/
+
+4. Para build de producao:
+   mvn clean package -DskipTests
+   java -jar target/quarkus-app/quarkus-run.jar
+
+================================================================
+DEPLOY (render.com / railway.app):
+
+1. Gerar imagem Docker:
+   mvn clean package -DskipTests
+   docker build -f src/main/docker/Dockerfile.jvm -t chronosgeo-api .
+
+2. Configurar variaveis de ambiente no servidor:
+   QUARKUS_DATASOURCE_USERNAME=rm566664
+   QUARKUS_DATASOURCE_PASSWORD=<senha_do_banco>
+   QUARKUS_DATASOURCE_JDBC_URL=jdbc:oracle:thin:@<host>:1521:orcl
+
+================================================================
+LINKS (preencher apos deploy):
+
+GitHub    : https://github.com/<usuario>/chronosgeo-api
+Deploy    : https://chronosgeo-api.onrender.com
+Video Pit : https://youtube.com/watch?v=<id>
+Video Demo: https://youtube.com/watch?v=<id>
+
+================================================================
